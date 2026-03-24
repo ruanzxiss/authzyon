@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: authzyon-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: authzyon
+      MYSQL_USER: authzyon
+      MYSQL_PASSWORD: senha123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    networks:
+      - authzyon-network
+
+  app:
+    build: .
+    container_name: authzyon-app
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: mysql://authzyon:senha123@mysql:3306/authzyon
+      JWT_SECRET: seu-secret-super-seguro-aqui-minimo-32-caracteres
+      NODE_ENV: production
+      VITE_APP_TITLE: AuthZyon
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - authzyon-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  authzyon-network:
+    driver: bridge
