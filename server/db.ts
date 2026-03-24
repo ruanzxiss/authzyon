@@ -41,7 +41,7 @@ export async function getAllAppUsers(): Promise<AppUser[]> {
 
 export async function createAppUser(data: InsertAppUser): Promise<void> {
   const db = await getDb();
-  if (!db) throw new Error("DB not available");
+
   await db.insert(appUsers).values(data);
 }
 
