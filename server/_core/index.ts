@@ -40,7 +40,7 @@ async function runMigrations() {
   const dbUrl = process.env.DATABASE_URL || process.env.MYSQL_URL;
   if (!dbUrl) {
     console.warn("[Migration] DATABASE_URL not set, skipping migrations...");
-    return;
+
   }
 
   try {
