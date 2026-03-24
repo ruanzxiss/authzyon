@@ -37,7 +37,7 @@ export async function getAllAppUsers(): Promise<AppUser[]> {
   const db = await getDb();
   if (!db) return [];
   return db.select().from(appUsers).orderBy(desc(appUsers.createdAt));
-}
+
 
 export async function createAppUser(data: InsertAppUser): Promise<void> {
   const db = await getDb();
