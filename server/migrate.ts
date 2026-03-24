@@ -9,15 +9,20 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function runMigrations() {
-  // Debug log for environment variables (safely)
-  const dbUrl = process.env.DATABASE_URL || process.env.MYSQL_URL || process.env.MYSQL_PRIVATE_URL;
+  console.log("Starting migration process...");
   
-  if (!dbUrl) {
-    console.error("Available env keys:", Object.keys(process.env).filter(k => !k.includes("SECRET") && !k.includes("KEY") && !k.includes("PASSWORD")));
-    throw new Error("DATABASE_URL is not set (checked DATABASE_URL, MYSQL_URL, and MYSQL_PRIVATE_URL)");
+  // Use a fresh read of process.env at runtime
+  const env = process.env;
+  const dbUrl = env.DATABASE_URL || env.MYSQL_URL || env.MYSQL_PRIVATE_URL;
+  
+  if (!dbUrl || dbUrl.trim() === "") {
+    const keys = Object.keys(env).filter(k => !k.includes("SECRET") && !k.includes("KEY") && !k.includes("PASSWORD"));
+    console.error("Available env keys at runtime:", keys);
+    console.error("Value of DATABASE_URL key exists?", !!env.DATABASE_URL);
+    throw new Error("DATABASE_URL is missing or empty at runtime.");
   }
 
-  console.log("Running migrations with database URL...");
+  console.log("Database URL found. Connecting...");
   
   const connection = await mysql.createConnection(dbUrl);
   const db = drizzle(connection);
