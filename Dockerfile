@@ -29,8 +29,8 @@ RUN npm install -g pnpm
 COPY package.json pnpm-lock.yaml* ./
 COPY patches ./patches
 
-# Instalar apenas dependências de produção
-RUN pnpm install --prod --frozen-lockfile
+# Instalar dependências (incluindo devDeps para runtime se necessário, ou apenas garantir vite)
+RUN pnpm install --frozen-lockfile
 
 # Copiar arquivos compilados do builder
 COPY --from=builder /app/dist ./dist
