@@ -34,7 +34,6 @@ RUN pnpm install --prod --frozen-lockfile
 
 # Copiar arquivos compilados do builder
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/client/dist ./client/dist
 
 # Expor porta
 EXPOSE 3000
